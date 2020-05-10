@@ -253,6 +253,7 @@ class Handler(with_metaclass(HandlerMeta, object)):
     im_opt = ''               # options to pass in to cli-program
     im_out = 'img'            # what to output: csv-list img,fcb,stdout,stderr
     im_prg = None             # cli program to use to create graphic output
+    im_name = ""              # name of the image
 
     # im_out is an ordered csv-list of what to produce:
     # - 'img'    outputs a link to an image (if any was produced)
@@ -321,6 +322,9 @@ class Handler(with_metaclass(HandlerMeta, object)):
         self.im_log = int(self.im_log)
         self.im_fmt = pf.get_extension(fmt, self.im_fmt)
 
+        if self.im_name:
+            self.msg(4, self.klass, 'image name', self.im_name)
+
         if not self.im_prg:
             # if no im_prg was found, fallback to klass's cmdmap
             self.im_prg = self.cmdmap.get(self.klass, None)
@@ -330,8 +334,8 @@ class Handler(with_metaclass(HandlerMeta, object)):
             raise Exception('no worker found for %s' % self.klass)
 
         self.basename = pf.get_filename4code(self.im_dir, str(codec))
-        self.outfile = self.basename + '.%s' % self.im_fmt
-        self.inpfile = self.basename + '.%s' % self.klass # _name.lower()
+        self.outfile = self.basename + "_" + self.im_name + '.%s' % self.im_fmt
+        self.inpfile = self.basename + "_" + self.im_name + '.%s' % self.klass # _name.lower()
 
         if not os.path.isfile(self.inpfile):
             self.write('w', self.code, self.inpfile)
